@@ -1,0 +1,163 @@
+export TF_LOG=TRACE
+#can be set TRACE/DEBUG/INFO/WARN/ERROR
+#trace is the most verbose level of logging and the most reliable one
+
+export TF_LOG_PATH=./terraform.log
+
+terraform init
+#fetches plugins etc by validating the content regarding providers in main.tf
+#fetched providers are stored in .terraform folder
+
+
+variable:
+
+variable "my-var" {
+   description  = "My Test Variable"
+   type = string
+   default = "Hello"
+   sensitive = true
+   validation {
+     condition = length(var.my-var) > 4
+     error_message = "The string must be more than 4 characters" 
+   }
+}
+
+variable "availability_zone_names" {
+   description  = "My Test Variable"
+   type = list(string)
+   default = ["us-west-1a"]
+}
+
+variable "docker_ports" {
+   type = list(object({
+     internal = number
+     external = number
+     protocol = string
+   }))
+   default = [
+     {
+       internal = 8300
+       external =8300
+       protocol = "tcp"
+     }
+   ]
+}
+
+type can be string/number/bool or list/set/map/object/tuple
+
+terraform apply -var my-var=some-random-string
+
+output:
+output "instance_ip" {
+   description = "VM's Private IP"
+   value = aws_instance.my-vm.private_ip
+}
+
+
+Provisioners:
+
+resource "null_resource" "resource_name" {
+      provisioner "local-exec" {
+               command = "echo '0' > status.txt"
+      }
+
+      provisioner "local-exec" {
+               when = destroy
+               command = "echo '1' > status.txt"
+      }
+}
+
+#provisioners can't be tracked in state file
+
+
+state:
+terraform state list
+#lists resources under the state that is tracked
+terraform state rm
+#that particular resource will be removed from tracking so that it will be not deleted even if applied 'terraform destroy'
+terraform state show
+#helps in fetching output of the deployed resource
+
+
+
+docker container deployment:
+https://github.com/linuxacademy/content-hashicorp-certified-terraform-associate-foundations/tree/master/section5-demo-aws-s3-remote-storage
+
+main.tf:
+provider "docker" {}
+
+resource "docker_image" "nginx-image" {
+  name = "nginx"
+}
+
+resource "docker_container" "nginx" {
+  image = docker_image.nginx-image.latest
+  name  = "nginx"
+  ports {
+    internal = 80
+    external = var.external_port
+    protocol = "tcp"
+  }
+}
+
+output "url" {
+  description = "Browser URL for container site"
+  value       = join(":", ["http://localhost", tostring(var.external_port)])
+}
+
+---
+
+backend.tf:
+terraform {
+  required_providers {
+    docker = {
+      source = "kreuzwerker/docker"
+    }
+  }
+  required_version = ">= 0.13"
+  backend "s3" {
+    profile = "demo"
+    region  = "us-east-1"
+    key     = "terraform.tfstate"
+    bucket  = "<AWS-S3-BUCKET-NAME-GOES-HERE>"
+  }
+}
+
+---
+
+variables.tf
+variable "external_port" {
+  type    = number
+  default = 8080
+  validation {
+    condition     = can(regex("8080|80", var.external_port))
+    error_message = "Port values can only be 8080 or 80."
+  }
+}
+
+
+-----------
+terraform fmt
+#formats the code for readability and consistent, safe to run at any time
+terraform taint
+#taint recreates the resources in state file, so that if any changes applied in 'terraform apply' it will delete and creates the old resources. 
+- to cause provisioners to run
+- replace misbehaving resources forcefully.
+terraform import
+- when you need to work with existing resources
+- when you don't have access to create environment, but just import resources and maintain
+
+terraform workspace list
+terraform workspace new <name>
+terraform workspace select <name>
+#default workspace state file is created in file, others will be created in folder
+
+-----------------------------
+https://learn.acloud.guru/course/using-terraform-to-manage-applications-and-infrastructure/dashboard
+https://learn.acloud.guru/course/hands-on-troubleshooting-with-terraform/dashboard
+https://learn.acloud.guru/course/3078e33a-0a35-433b-a341-a45d3c46bd1d/dashboard
+https://learn.acloud.guru/course/advanced-terraform-with-gcp/dashboard
+-----------
+https://github.com/orgs/linuxacademy/repositories?q=terraform&type=all&language=&sort=
+https://github.com/orgs/ACloudGuru-Resources/repositories?q=terraform&type=all&language=&sort=
+https://github.com/WayneHoggett-ACG/Hands-On_with_Terraform_on_Azure
