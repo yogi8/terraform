@@ -3,7 +3,7 @@ resource "google_container_cluster" "cluster" {
   location = var.region
 
   remove_default_node_pool = true
-  initial_node_count       = 3
+  initial_node_count       = 1
 }
 resource "google_container_node_pool" "nodes" {
   name       = "${var.name}-nodes"
