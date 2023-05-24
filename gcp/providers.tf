@@ -9,11 +9,12 @@ terraform {
   backend "gcs" {
       bucket = "gcptfstate"
       prefix = "terraform/dev"
+#      credentials = file("key.json")
   }
 }
 
 provider "google" {
-  credentials = file("key.json")
+#  credentials = file("key.json")
 
   project = "playground-s-11-3d9058a1"
   region  = "us-central1"
