@@ -4,7 +4,7 @@ variable "name" {
 }
 
 variable "region" {
-  default     = ""
+  default     = "us-central1-c"
   description = "region"
 }
 
@@ -14,6 +14,6 @@ variable "node_count" {
 }
 
 variable "machine_type" {
-  default     = ""
+  default     = "e2-micro"
   description = "machine type of worker nodes"
 }
