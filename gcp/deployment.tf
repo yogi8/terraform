@@ -9,3 +9,15 @@ resource "helm_release" "nginx_ingress" {
     value = "ClusterIP"
   }
 }
+
+resource "helm_release" "nginx" {
+  name       = "nginx"
+
+  repository = "https://charts.bitnami.com/bitnami"
+  chart      = "nginx"
+
+  set {
+    name  = "service.type"
+    value = "ClusterIP"
+  }
+}

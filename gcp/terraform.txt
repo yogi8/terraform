@@ -161,3 +161,9 @@ https://learn.acloud.guru/course/advanced-terraform-with-gcp/dashboard
 https://github.com/orgs/linuxacademy/repositories?q=terraform&type=all&language=&sort=
 https://github.com/orgs/ACloudGuru-Resources/repositories?q=terraform&type=all&language=&sort=
 https://github.com/WayneHoggett-ACG/Hands-On_with_Terraform_on_Azure
+
+1). create bucket with 'gsutil mb gs://gcptfstate'
+2). Enable kubernetes API
+3). Change project ID and bucket name in providers.tf
+4). init, fmt, validate, plan and apply
+gcloud container clusters get-credentials rampage --location us-central1-c
