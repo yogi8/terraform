@@ -166,4 +166,11 @@ https://github.com/WayneHoggett-ACG/Hands-On_with_Terraform_on_Azure
 2). Enable kubernetes API
 3). Change project ID and bucket name in providers.tf
 4). init, fmt, validate, plan and apply
-gcloud container clusters get-credentials rampage --location us-central1-c
+5) fetch kubernetes cluster config using 'gcloud container clusters get-credentials rampage --location us-central1-c'
+6) add 'helm repo add bitnami https://charts.bitnami.com/bitnami' and 'helm pull bitnami/nginx'
+
+
+enable google artifact registry api
+enable Cloud Key Management Service (KMS) API
+gcloud auth configure-docker us-central1-docker.pkg.dev
+helm push nginx-15.0.1.tgz oci://us-central1-docker.pkg.dev/playground-s-11-393dfc07/dock
