@@ -37,6 +37,8 @@ provider "helm" {
 }
 
 
+data "google_project" "project" {}
+
 # module "gke_auth" {
 #   source = "terraform-google-modules/kubernetes-engine/google//modules/auth"
 #   version = "24.1.0"

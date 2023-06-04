@@ -171,6 +171,6 @@ https://github.com/WayneHoggett-ACG/Hands-On_with_Terraform_on_Azure
 
 
 enable google artifact registry api
-enable Cloud Key Management Service (KMS) API
+#enable Cloud Key Management Service (KMS) API
 gcloud auth configure-docker us-central1-docker.pkg.dev
 helm push nginx-15.0.1.tgz oci://us-central1-docker.pkg.dev/playground-s-11-393dfc07/dock

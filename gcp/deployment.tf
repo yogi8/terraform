@@ -33,27 +33,26 @@ resource "google_artifact_registry_repository" "my-repo" {
   repository_id = "dock"
   description   = "example docker repository"
   format        = "DOCKER"
-  # kms_key_name  = google_kms_crypto_key.example-key.id
 }
 
-resource "null_resource" "readcontentfile" {
-  provisioner "local-exec" {
-   command = "Get-Content -Path ../mytextfile.txt"
-   interpreter = ["PowerShell", "-Command"]
-  }
-}
+# resource "null_resource" "readcontentfile" {
+#   provisioner "local-exec" {
+#    command = "helm push nginx-15.0.1.tgz oci://${var.region}-docker.pkg.dev/playground-s-11-393dfc07/dock"
+# #   interpreter = ["bash", "-c"]
+#   }
+# }
 
-resource "helm_release" "nginx" {
-  name       = "nginx"
+# resource "helm_release" "nginx" {
+#   name       = "nginx"
 
-  repository = "oci://us-central1-docker.pkg.dev/playground-s-11-393dfc07/dock"
-  chart      = "nginx"
+#   repository = "oci://us-central1-docker.pkg.dev/playground-s-11-393dfc07/dock"
+#   chart      = "nginx"
 
-  set {
-    name  = "service.type"
-    value = "ClusterIP"
-  }
-}
+#   set {
+#     name  = "service.type"
+#     value = "ClusterIP"
+#   }
+# }
 
 output "cheese" {
   value = google_artifact_registry_repository.my-repo
