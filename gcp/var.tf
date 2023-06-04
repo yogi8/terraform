@@ -17,3 +17,13 @@ variable "machine_type" {
   default     = "e2-micro"
   description = "machine type of worker nodes"
 }
+
+variable "repository" {
+  default     = "dock"
+  description = "repository name"
+}
+
+variable "repository_region" {
+  default     = "us-central1"
+  description = "repository region name"
+}

@@ -169,6 +169,7 @@ https://github.com/WayneHoggett-ACG/Hands-On_with_Terraform_on_Azure
 5) fetch kubernetes cluster config using 'gcloud container clusters get-credentials rampage --location us-central1-c'
 6) add 'helm repo add bitnami https://charts.bitnami.com/bitnami' and 'helm pull bitnami/nginx'
 
+enable Cloud Resource Manager API
 
 enable google artifact registry api
 #enable Cloud Key Management Service (KMS) API

@@ -1,3 +1,3 @@
 output "project" {
-  value = google_project.project
+  value = data.google_project.project
 }

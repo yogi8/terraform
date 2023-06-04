@@ -27,6 +27,7 @@ provider "google" {
 data "google_client_config" "provider" {}
 
 provider "helm" {
+  registry_config_path = abspath("~/.docker.config.json")
   kubernetes {
     host  = "https://${google_container_cluster.cluster.endpoint}"
     token = data.google_client_config.provider.access_token

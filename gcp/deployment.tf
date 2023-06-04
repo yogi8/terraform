@@ -1,14 +1,14 @@
-resource "helm_release" "nginx_ingress" {
-  name       = "nginx-ingress-controller"
+# resource "helm_release" "nginx_ingress" {
+#   name       = "nginx-ingress-controller"
 
-  repository = "https://charts.bitnami.com/bitnami"
-  chart      = "nginx-ingress-controller"
+#   repository = "https://charts.bitnami.com/bitnami"
+#   chart      = "nginx-ingress-controller"
 
-  set {
-    name  = "service.type"
-    value = "ClusterIP"
-  }
-}
+#   set {
+#     name  = "service.type"
+#     value = "ClusterIP"
+#   }
+# }
 
 
 
@@ -29,7 +29,7 @@ resource "helm_release" "nginx_ingress" {
 
 
 resource "google_artifact_registry_repository" "my-repo" {
-  location      = var.region
+  location      = var.repository_region
   repository_id = "dock"
   description   = "example docker repository"
   format        = "DOCKER"
@@ -37,22 +37,29 @@ resource "google_artifact_registry_repository" "my-repo" {
 
 # resource "null_resource" "readcontentfile" {
 #   provisioner "local-exec" {
-#    command = "helm push nginx-15.0.1.tgz oci://${var.region}-docker.pkg.dev/playground-s-11-393dfc07/dock"
-# #   interpreter = ["bash", "-c"]
+#     command = "gcloud auth configure-docker ${var.repository_region}-docker.pkg.dev --quiet && helm push nginx-15.0.1.tgz oci://${var.repository_region}-docker.pkg.dev/${data.google_project.project.name}/${var.repository}"
 #   }
 # }
 
-# resource "helm_release" "nginx" {
-#   name       = "nginx"
-
-#   repository = "oci://us-central1-docker.pkg.dev/playground-s-11-393dfc07/dock"
-#   chart      = "nginx"
-
-#   set {
-#     name  = "service.type"
-#     value = "ClusterIP"
+# data "template_file" "init" {
+#   template = file("${path.module}/init.tpl")
+#   vars = {
+#     repo_name = "${var.repository_region}"
 #   }
 # }
+
+
+resource "helm_release" "nginx" {
+  name       = "nginx"
+
+  repository = "oci://${var.repository_region}-docker.pkg.dev/${data.google_project.project.name}/${var.repository}"
+  chart      = "nginx"
+
+  set {
+    name  = "service.type"
+    value = "ClusterIP"
+  }
+}
 
 output "cheese" {
   value = google_artifact_registry_repository.my-repo
