@@ -1,3 +1,4 @@
+#working
 # resource "helm_release" "nginx_ingress" {
 #   name       = "nginx-ingress-controller"
 
@@ -11,7 +12,7 @@
 # }
 
 
-
+#not required
 # resource "google_kms_key_ring" "keyring" {
 #   name     = "keyring-example"
 #   location = var.region
@@ -48,17 +49,23 @@ resource "google_artifact_registry_repository" "my-repo" {
 #   }
 # }
 
+#can be checked with pre execution of 'gcloud auth configure-docker us-central1-docker.pkg.dev'
+#where helm registry key is given 'registry_config_path' to custom path like below is not working
+# resource "helm_release" "nginx" {
+#   name       = "nginx"
 
-resource "helm_release" "nginx" {
-  name       = "nginx"
+#   repository = "oci://${var.repository_region}-docker.pkg.dev/${data.google_project.project.name}/${var.repository}"
+#   chart      = "nginx"
 
-  repository = "oci://${var.repository_region}-docker.pkg.dev/${data.google_project.project.name}/${var.repository}"
-  chart      = "nginx"
+#   set {
+#     name  = "service.type"
+#     value = "ClusterIP"
+#   }
+# }
 
-  set {
-    name  = "service.type"
-    value = "ClusterIP"
-  }
+resource "helm_release" "example" {
+  name       = "my-local-chart"
+  chart      = "./charts/example"
 }
 
 output "cheese" {

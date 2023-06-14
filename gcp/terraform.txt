@@ -175,3 +175,5 @@ enable google artifact registry api
 #enable Cloud Key Management Service (KMS) API
 gcloud auth configure-docker us-central1-docker.pkg.dev
 helm push nginx-15.0.1.tgz oci://us-central1-docker.pkg.dev/playground-s-11-393dfc07/dock
+
+helm template nginx-15.0.1.tgz --set image.registry=aaa --set image.repository=bbb --set image.tag=cccs
