@@ -36,11 +36,24 @@ resource "google_artifact_registry_repository" "my-repo" {
   format        = "DOCKER"
 }
 
-# resource "null_resource" "readcontentfile" {
-#   provisioner "local-exec" {
-#     command = "gcloud auth configure-docker ${var.repository_region}-docker.pkg.dev --quiet && helm push nginx-15.0.1.tgz oci://${var.repository_region}-docker.pkg.dev/${data.google_project.project.name}/${var.repository}"
-#   }
-# }
+resource "null_resource" "readcontentfile" {
+  provisioner "local-exec" {
+    command = "helm push nginx-15.0.1.tgz oci://${var.repository_region}-docker.pkg.dev/${data.google_project.project.name}/${var.repository}/chart"
+  }
+  depends_on = [google_artifact_registry_repository.my-repo]
+}
+
+resource "docker_registry_image" "helloworld" {
+  name          = docker_image.image.name
+  keep_remotely = true
+}
+
+resource "docker_image" "image" {
+  name = "${var.repository_region}-docker.pkg.dev/${data.google_project.project.name}/${var.repository}/image/nginx"
+  build {
+    context = "${path.cwd}/build/nginx"
+  }
+}
 
 # data "template_file" "init" {
 #   template = file("${path.module}/init.tpl")
@@ -51,22 +64,37 @@ resource "google_artifact_registry_repository" "my-repo" {
 
 #can be checked with pre execution of 'gcloud auth configure-docker us-central1-docker.pkg.dev'
 #where helm registry key is given 'registry_config_path' to custom path like below is not working
-# resource "helm_release" "nginx" {
-#   name       = "nginx"
+resource "helm_release" "nginx" {
+  name       = "nginx"
 
-#   repository = "oci://${var.repository_region}-docker.pkg.dev/${data.google_project.project.name}/${var.repository}"
-#   chart      = "nginx"
+  repository = "oci://${var.repository_region}-docker.pkg.dev/${data.google_project.project.name}/${var.repository}/chart"
+  chart      = "nginx"
 
-#   set {
-#     name  = "service.type"
-#     value = "ClusterIP"
-#   }
-# }
+  set {
+    name  = "image.registry"
+    value = "${var.repository_region}-docker.pkg.dev"
+  }
 
-resource "helm_release" "example" {
-  name       = "my-local-chart"
-  chart      = "./charts/example"
+  set {
+    name  = "image.repository"
+    value = "${data.google_project.project.name}/${var.repository}/image/nginx"
+  }
+
+  set {
+    name  = "containerPorts.http"
+    value = "80"
+  }
+
+  set {
+    name  = "image.tag"
+    value = "latest"
+  }
 }
+
+# resource "helm_release" "example" {
+#   name       = "my-local-chart"
+#   chart      = "./charts/example"
+# }
 
 output "cheese" {
   value = google_artifact_registry_repository.my-repo

@@ -9,6 +9,10 @@ terraform {
       source  = "hashicorp/helm"
       version = "2.9.0"
     }
+    docker = {
+      source  = "kreuzwerker/docker"
+      version = "3.0.2"
+    }
   }
   backend "gcs" {
       bucket = "gcptfstate"
@@ -37,6 +41,11 @@ provider "helm" {
   }
 }
 
+provider "docker" {
+  registry_auth {
+    address = "${var.repository_region}-docker.pkg.dev"
+  }
+}
 
 data "google_project" "project" {}
 
